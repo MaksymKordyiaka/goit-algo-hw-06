@@ -11,14 +11,14 @@ class Field:
 class Name(Field):
     def __init__(self, value):
         if not value:
-            print("Name cannot be empty")
+            raise ValueError("Name cannot be empty")
         super().__init__(value)
 
 
 class Phone(Field):
     def __init__(self, value):
         if not value.isdigit() or len(value) != 10:
-            print("Phone number must contain 10 digits")
+            raise ValueError("Phone number must contain 10 digits")
         super().__init__(value)
 
 
