@@ -31,18 +31,20 @@ class Record:
         self.phones.append(Phone(phone))
 
     def remove_phone(self, phone):
-        self.phones = [p for p in self.phones if p.value != phone.value]
+        self.phones = [p for p in self.phones if p.value != phone]
 
     def edit_phone(self, old_phone, new_phone):
         old_phone_obj = self.find_phone(old_phone)
         if old_phone_obj:
+            if not new_phone.isdigit() or len(new_phone) != 10:
+                raise ValueError("New phone number must contain 10 digits")
             old_phone_obj.value = new_phone
         else:
             raise ValueError("Phone number not found.")
 
     def find_phone(self, phone):
         for p in self.phones:
-            if str(p) == phone:
+            if p.value == phone:
                 return p
         return None
 
@@ -63,36 +65,36 @@ class AddressBook(UserDict):
         else:
             raise ValueError(f"Record with name '{name}' not found in the address book.")
 
+if __name__ == '__main__':
+    # Створення нової адресної книги
+    book = AddressBook()
 
-# Створення нової адресної книги
-book = AddressBook()
+    # Створення запису для John
+    john_record = Record("John")
+    john_record.add_phone("1234567890")
+    john_record.add_phone("5555555555")
 
-# Створення запису для John
-john_record = Record("John")
-john_record.add_phone("1234567890")
-john_record.add_phone("5555555555")
+    # Додавання запису John до адресної книги
+    book.add_record(john_record)
 
-# Додавання запису John до адресної книги
-book.add_record(john_record)
+    # Створення та додавання нового запису для Jane
+    jane_record = Record("Jane")
+    jane_record.add_phone("9876543210")
+    book.add_record(jane_record)
 
-# Створення та додавання нового запису для Jane
-jane_record = Record("Jane")
-jane_record.add_phone("9876543210")
-book.add_record(jane_record)
+    # Виведення всіх записів у книзі
+    for name, record in book.data.items():
+        print(record)
 
-# Виведення всіх записів у книзі
-for name, record in book.data.items():
-    print(record)
+    # Знаходження та редагування телефону для John
+    john = book.find("John")
+    john.edit_phone("1234567890", "1112223333")
 
-# Знаходження та редагування телефону для John
-john = book.find("John")
-john.edit_phone("1234567890", "1112223333")
+    print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
 
-print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
+    # Пошук конкретного телефону у записі John
+    found_phone = john.find_phone("5555555555")
+    print(f"{john.name}: {found_phone}")  # Виведення: 5555555555
 
-# Пошук конкретного телефону у записі John
-found_phone = john.find_phone("5555555555")
-print(f"{john.name}: {found_phone}")  # Виведення: 5555555555
-
-# Видалення запису Jane
-book.delete("Jane")
+    # Видалення запису Jane
+    book.delete("Jane")
